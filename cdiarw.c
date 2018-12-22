@@ -19,18 +19,7 @@
 #include <linux/fs.h>
 #include <linux/cdev.h>
 #include <linux/ioctl.h>
-#include <linux/uaccess.h>
-
-
-struct arw_param {
-	void *src;
-	void *dest;
-	ssize_t len;
-};
-
-#define CDIARW_MAGIC 0xCE
-#define CDIARW_WRITE _IOW(CDIARW_MAGIC, 0, struct arw_param)
-#define CDIARW_READ _IOR(CDIARW_MAGIC, 1, struct arw_param)
+#include "cdiarw.h"
 
 static unsigned int cdiarw_major;
 static struct cdev cdiarw_cdev;
