@@ -19,6 +19,7 @@ $ sudo mknod c `cat /proc/devices | grep -i cdi-arw|cut -d" " -f1` 0 /dev/cdiarw
 
 ### 2. attack!
 
+### character device
 sample code
 ```C
 #include <stdio.h>
@@ -70,4 +71,54 @@ hello world
 hello world
 hello modified world
 hello modified world
+```
+
+### procfs support
+write parameter to /proc/cdi-arw
+
+sample code:
+
+```C
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <errno.h>
+
+#include "cdiarw.h"
+
+int main(void)
+{
+    char msg[64];
+    char msg2[64];
+    struct arw_param p;
+    int i, fd;
+
+    strncpy(msg, "hello world", sizeof(msg));
+    strncpy(msg2, "hello modified world", sizeof(msg));
+    
+    p.src = msg2; // set destination address
+    p.dest= msg;  // set source address
+    p.len = strlen(msg2);  // set copy length
+
+//    if(-1 == (fd = open("/tmp/arw0", O_RDWR))){
+    if(-1 == (fd = open("/proc/cdi-arw", O_RDWR))){
+	    fprintf(stderr, "%s\n", strerror(errno));
+	    return -1;
+    }
+
+    for(i=0; i<5; i++){
+        printf("%s\n", msg);
+        sleep(1);
+        if(i==2){
+            // write arw_param data to /proc/cdi-arw
+            write(fd, &p, sizeof(struct arw_param)); 
+        }
+    }
+    close(fd);
+    return 0;
+}
 ```
