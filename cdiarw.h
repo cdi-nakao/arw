@@ -16,7 +16,6 @@
 #ifndef _CDI_ARW_H
 #define _CDI_ARW_H
 
-#include <linux/uaccess.h>
 
 
 struct arw_param {
@@ -25,8 +24,7 @@ struct arw_param {
 	ssize_t len;
 };
 
-#define CDIARW_MAGIC 0xCE
-#define CDIARW_WRITE _IOW(CDIARW_MAGIC, 0, struct arw_param)
-#define CDIARW_READ _IOR(CDIARW_MAGIC, 1, struct arw_param)
+#define CDIARW_WRITE 0x4018cd10
+#define CDIARW_READ 0x8018cd10
 
 #endif
